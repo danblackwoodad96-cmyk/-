@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Записи из Кофейни</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f1e9;
+      --surface: #fffdf9;
+      --surface-alt: #efe8dc;
+      --text: #2b241d;
+      --text-muted: #6e6256;
+      --accent: #7c4d2b;
+      --accent-hover: #5e381d;
+      --border: #e2d7c7;
+      --shadow: 0 8px 28px rgba(43, 36, 29, 0.06);
+    }
+
+    [data-theme="dark"] {
+      --bg: #181512;
+      --surface: #221e1a;
+      --surface-alt: #2b2621;
+      --text: #ebe3d8;
+      --text-muted: #a39687;
+      --accent: #d49b6a;
+      --accent-hover: #e3b084;
+      --border: #362f29;
+      --shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 28px 0 36px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--surface-alt);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+      max-width: 520px;
+      margin: 0 auto 24px;
+    }
+
+    /* Controls & Download bar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fffdf9;
+      border-color: var(--accent);
+    }
+
+    [data-theme="dark"] .btn-primary {
+      color: #181512;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    /* Search & Page Nav */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 28px;
+      align-items: center;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 220px;
+      padding: 11px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+    }
+
+    .page-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .pill.active, .pill:hover {
+      background: var(--accent);
+      color: #fffdf9;
+      border-color: var(--accent);
+    }
+
+    [data-theme="dark"] .pill.active,
+    [data-theme="dark"] .pill:hover {
+      color: #181512;
+    }
+
+    /* Note Cards */
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 30px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .page-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .date-tag {
+      font-size: 13px;
+      color: var(--text-muted);
+      background: var(--surface-alt);
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+
+    .note-body {
+      font-size: 15.5px;
+      white-space: pre-line;
+    }
+
+    .note-body p + p {
+      margin-top: 12px;
+    }
+
+    .author-note {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 13.5px;
+      font-style: italic;
+      color: var(--text-muted);
+      background: var(--surface-alt);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    /* Special layouts for Page 5 & Page 6 */
+    .big-caps {
+      font-size: clamp(1.35rem, 3.2vw, 1.9rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      line-height: 1.35;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+    }
+
+    .sketch-left-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .sketch-frame {
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 8px;
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      max-width: 100%;
+    }
+
+    .sketch-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    .sketch-left-wrap .sketch-frame {
+      max-width: 440px;
+    }
+
+    /* Page 6: text left, image right */
+    .split-right {
+      display: grid;
+      grid-template-columns: 1fr 270px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .entry-divider {
+      border: none;
+      border-top: 1px dashed var(--border);
+      margin: 22px 0;
+    }
+
+    .sub-date {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-muted);
+      display: none;
+    }
+
+    @media (max-width: 680px) {
+      .card {
+        padding: 20px;
+      }
+      .split-right {
+        grid-template-columns: 1fr;
+      }
+      .split-right .sketch-frame {
+        max-width: 340px;
+      }
+    }
+
+    /* Print / PDF Styles */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #111111 !important;
+      }
+      .toolbar, .filter-bar, .badge {
+        display: none !important;
+      }
+      .container {
+        max-width: 100%;
+        padding: 0;
+      }
+      header {
+        padding: 0 0 16px;
+        margin-bottom: 20px;
+      }
+      .card {
+        box-shadow: none !important;
+        border: 1px solid #cccccc !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-bottom: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge">Цифровой архив блокнота</span>
+      <h1>Записи из Кофейни</h1>
+      <p class="subtitle">Живые мысли, случайные признания и наброски посетителей, бережно перенесённые со страниц бумажного блокнота.</p>
+      
+      <div class="toolbar">
+        <button class="btn btn-primary" onclick="window.print()">
+          📄 Скачать / Сохранить PDF
+        </button>
+        <button class="btn" onclick="downloadFB2()">
+          📚 Скачать FB2
+        </button>
+        <button class="btn" id="themeToggle" onclick="toggleTheme()">
+          🌙 Тёмная тема
+        </button>
+      </div>
+    </header>
+
+    <div class="filter-bar">
+      <input type="text" id="searchInput" class="search-input" placeholder="Поиск по тексту или дате..." oninput="filterNotes()" />
+      <div class="page-pills" id="pagePills">
+        <button class="pill active" data-page="all" onclick="selectPage('all', this)">Все страницы</button>
+        <button class="pill" data-page="1" onclick="selectPage('1', this)">Стр. 1</button>
+        <button class="pill" data-page="2" onclick="selectPage('2', this)">Стр. 2</button>
+        <button class="pill" data-page="3" onclick="selectPage('3', this)">Стр. 3</button>
+        <button class="pill" data-page="4" onclick="selectPage('4', this)">Стр. 4</button>
+        <button class="pill" data-page="5" onclick="selectPage('5', this)">Стр. 5</button>
+        <button class="pill" data-page="6" onclick="selectPage('6', this)">Стр. 6</button>
+        <button class="pill" data-page="7" onclick="selectPage('7', this)">Стр. 7</button>
+      </div>
+    </div>
+
+    <main class="notes-list" id="notesList">
+
+      <!-- Страница 1 -->
+      <article class="card" data-page="1">
+        <div class="card-header">
+          <span class="page-label">Страница 1</span>
+          <span class="date-tag">Заметки</span>
+        </div>
+        <div class="note-body"><strong>! Мои Заметки!</strong>
+
+Вспоминай что-нибудь только тогда, когда это доставляет тебе удовольствие.
+
+YOLO — you live only once ♡
+
+3 Правила жизни:
+1) Не рассказывать личные отношения
+2) Счастье любит тишину
+3) Не болтай о своих планах.
+
+☆ Важный инсайт: Вы офигенный человек. Будьте в этом уверены.
+♡ Стены только у нас в голове!
+! Стать тем, в кого ты влюбишься сам!</div>
+      </article>
+
+      <!-- Страница 2 -->
+      <article class="card" data-page="2">
+        <div class="card-header">
+          <span class="page-label">Страница 2</span>
+          <span class="date-tag">28/06</span>
+        </div>
+        <div class="note-body">Привет! Меня зовут Алия и мне исполнилось 18.
+На данный момент ищу себя, пытаюсь ежедневно узнавать что-то новое (изучаю искусство, дизайн, фотографирование) и стремлюсь к ежедневной активности.
+Если честно после окончания школы немного странно чувствую себя. Понимаю, что нужно брать себе в руки, но иногда выгораю и ухожу в себя :(
+Пишу это для тех, кто тоже заканчивает запутался или уже закончил(а) школу и не знает, что будет дальше. Но уверяю вас, что всё будет хорошо.
+Жизнь очень интересна и просто нужно жить, рисковать, искать, смеяться?, радоваться, плакать, любить, быть добрым(ой) ко всем и любить себя. А еще цените близких и живите/проводите с ними больше времени &lt;3. Также недавно прочитала в книге такую штуку: Жизнь на самом деле не трудна, она на самом деле проста, а еще вы думаете, что она ужасна и вокруг все плохо, то это ваша проблема и вам жить с этим (концовка вырвана)</div>
+      </article>
+
+      <!-- Страница 3 -->
+      <article class="card" data-page="3">
+        <div class="card-header">
+          <span class="page-label">Страница 3</span>
+          <span class="date-tag">12/07</span>
+        </div>
+        <div class="note-body">Меня зовут Томирис. Мне 27 лет :)
+Сегодня воскресенье, и мы сидим с Томой. Очень вкусно поели.
+Завтра нам на нелюбимую работу.
+С каждым годом уже не так ждешь и радуешься лету.
+От этого и грустно.</div>
+        <div class="author-note">В скобочках снизу: (жду счастье)</div>
+      </article>
+
+      <!-- Страница 4 -->
+      <article class="card" data-page="4">
+        <div class="card-header">
+          <span class="page-label">Страница 4</span>
+          <span class="date-tag">12/07</span>
+        </div>
+        <div class="note-body">Всем привет! Дорогой дневник, обещаю тебе, что отныне я буду ставить себя на первое место. Первым делом мы с Томирис уволимся с нелюбимой работы, переедем заграницу, найдем любимое дело по душе. Ведь жизнь одна, и время идет.
+Спасибо этой кофейне за вкусную еду, уют, гостеприимство.</div>
+      </article>
+
+      <!-- Страница 5 -->
+      <article class="card" data-page="5">
+        <div class="card-header">
+          <span class="page-label">Страница 5</span>
+          <span class="date-tag">Рисунок</span>
+        </div>
+        <div class="sketch-left-wrap">
+          <div class="big-caps">МЕНІҢ АТЫМ АЙҒАНЫМ 6 ЖАСТАМЫН</div>
+          <div class="sketch-frame">
+            <img src="drawing1.jpg" alt="Рисунок 1 — МЕНІҢ АТЫМ АЙҒАНЫМ 6 ЖАСТАМЫН" />
+          </div>
+        </div>
+      </article>
+
+      <!-- Страница 6 -->
+      <article class="card" data-page="6">
+        <div class="card-header">
+          <span class="page-label">Страница 6</span>
+          <span class="date-tag">22/07</span>
+        </div>
+        <div class="split-right">
+          <div class="note-body">Привет! ★
+Время 21:46. Мы сидим напротив окна и молчим. Как это прекрасно иметь того человека, с кем можно помолчать... Пьём вкусный, Фруктовый чай. Пришли сюда после театра. Смотрели «Вишнёвый сад». Я сделала очень много красивых кадров ♡.
+Желаю тебе хороших людей вокруг ♡. Дари тепло и любви ♡.</div>
+          <div class="sketch-frame">
+            <img src="drawing2.jpg" alt="Рисунок 2 — [Тут чай] и цветы в банке" />
+          </div>
+        </div>
+      </article>
+
+      <!-- Страница 7 -->
+      <article class="card" data-page="7">
+        <div class="card-header">
+          <span class="page-label">Страница 7</span>
+          <span class="date-tag">25/08 — 05/09</span>
+        </div>
+        <div class="note-body"><span class="sub-date">25/08</span>
+На протяжении долгих лет я таила в себе злость и агрессию на некоторых людей. Недавно я встретила человека, невероятного для меня. Он приносил людям неимоверное счастье и надежду. Он изменил меня и я начала задумываться об отдаче добра, мира и пользы в этот мир и людям.
+
+В мире и так много зла, поэтому будьте теми, кто приносит добро и счастье &lt;3
+(мелким почерком сбоку): Будьте теми, кто
+Принимайте себя и вы примите остальных людей.
+П.с. Всем желаю найти себя, любить, ценить.</div>
+
+        <hr class="entry-divider" />
+
+        <div class="note-body"><span class="sub-date">05/09</span>
+Помню, как мне впервые показали эту кофейню. Была зима, мы организовали некое подобие книжного клуба, и чтобы разнообразить досуг, ходили по разным интересным кофейням, играли настолки и тд. Как-то решили собраться и прокатиться на открытом катке. Кататься я не особо умел и любил, так что пил чай и снимал, как катаются остальные с телефона, хотя я и понятия не имел, есть ли в этом необходимость, но почему-то рука сама тянулась заснять мгновение. Те кто стоял на холоде естественно здорово так промерзли, и девушка по имени Дильназ, которая как раз таки знала всякие интересные места, предложила нам всем вместе завалиться в ближайшую кофейню. Мы по незнанию думали про популярную сеть кофеень, которую все слышали и которая была неподалеку от места катании, но мы ошиблись. Как сейчас помню, вот мы заходим внутрь, и после холодрыги снаружи, тепло здания и душный аромат кофе показался таким притягательным мне. Я впервые прочувствовал атмосферу аутентичной кофейни, впервые поднялся по винтовой лестнице в жизни, и там, на 2 его этаже, все мы сидели и обменивались мнениями, болтали, а я слушая тихо звучащий инди рок сквозь колонки, мысленно переносился в некое безвременье. Было в этом что-то от вселенной Гарри Поттера знаете ли, словно попал в одно из тех злачных мест в Хогсмиде, что так ярко описывала Джоан Роулинг. И вот тогда я наверное и выбрал неосознанно это место своим сердцем и душой.</div>
+      </article>
+
+    </main>
+
+    <div class="empty-state" id="emptyState">
+      По вашему запросу записей не найдено.
+    </div>
+  </div>
+
+  <script>
+    let currentPageFilter = 'all';
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const btn = document.getElementById('themeToggle');
+      if (html.getAttribute('data-theme') === 'dark') {
+        html.removeAttribute('data-theme');
+        btn.textContent = '🌙 Тёмная тема';
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        btn.textContent = '☀️ Светлая тема';
+      }
+    }
+
+    function selectPage(page, el) {
+      currentPageFilter = page;
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      filterNotes();
+    }
+
+    function filterNotes() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.card');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const page = card.getAttribute('data-page');
+        const text = card.innerText.toLowerCase();
+        const matchesPage = currentPageFilter === 'all' || page === currentPageFilter;
+        const matchesQuery = !query || text.includes(query);
+
+        if (matchesPage && matchesQuery) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      document.getElementById('emptyState').style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    function escapeXml(unsafe) {
+      return unsafe.replace(/[<>&'"]/g, c => ({
+        '<': '&lt;', '>': '&gt;', '&': '&amp;', '\'': '&apos;', '"': '&quot;'
+      }[c]));
+    }
+
+    function downloadFB2() {
+      const cards = document.querySelectorAll('.card');
+      let sectionsXml = '';
+
+      cards.forEach(card => {
+        const title = card.querySelector('.page-label').innerText;
+        const date = card.querySelector('.date-tag').innerText;
+        const rawText = card.innerText
+          .replace(title, '')
+          .replace(date, '')
+          .trim();
+
+        const paragraphs = rawText
+          .split(/\n+/)
+          .map(line => line.trim())
+          .filter(Boolean)
+          .map(line => `      <p>${escapeXml(line)}</p>`)
+          .join('\n');
+
+        sectionsXml += `    <section>\n      <title><p>${escapeXml(title)} (${escapeXml(date)})</p></title>\n${paragraphs}\n    </section>\n`;
+      });
+
+      const fb2Content = `<?xml version="1.0" encoding="utf-8"?>
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+  <description>
+    <title-info>
+      <genre>nonfiction</genre>
+      <author><first-name>Посетители</first-name><last-name>Кофейни</last-name></author>
+      <book-title>Записи из Кофейни</book-title>
+      <lang>ru</lang>
+    </title-info>
+  </description>
+  <body>
+    <title><p>Записи из Кофейни</p></title>
+${sectionsXml}  </body>
+</FictionBook>`;
+
+      const blob = new Blob([fb2Content], { type: 'application/x-fictionbook+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Zapisi_iz_Kofeini.fb2';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
